@@ -16,6 +16,7 @@ import (
 func main() {
 	initDB()
 	insert()
+	update()
 }
 
 func initDB() {
@@ -39,4 +40,10 @@ func insert() {
 	fmt.Printf("before user = %+v\n", user)
 	user.InsertGP(context.Background(), boil.Infer())
 	fmt.Printf("after user = %+v\n", user)
+}
+
+func update() {
+	user := db.User{ID: 1}
+	user.Email = null.StringFrom("update@example.com")
+	user.UpdateGP(context.Background(), boil.Infer())
 }
