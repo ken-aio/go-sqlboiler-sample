@@ -15,8 +15,9 @@ import (
 
 func main() {
 	initDB()
-	insert()
-	update()
+	//insert()
+	//update()
+	delete()
 }
 
 func initDB() {
@@ -46,4 +47,9 @@ func update() {
 	user := db.User{ID: 1}
 	user.Email = null.StringFrom("update@example.com")
 	user.UpdateGP(context.Background(), boil.Infer())
+}
+
+func delete() {
+	user := db.User{ID: 1}
+	user.DeleteGP(context.Background())
 }
