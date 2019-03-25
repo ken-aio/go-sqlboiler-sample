@@ -17,7 +17,8 @@ func main() {
 	initDB()
 	//insert()
 	//update()
-	delete()
+	//delete()
+	insertTx()
 }
 
 func initDB() {
@@ -52,4 +53,21 @@ func update() {
 func delete() {
 	user := db.User{ID: 1}
 	user.DeleteGP(context.Background())
+}
+
+func insertTx() {
+	ctx := context.Background()
+	tx, err := boil.BeginTx(ctx, nil)
+	if err != nil {
+		panic(err)
+	}
+	user := db.User{Email: null.StringFrom("test@example.com"), PasswordDigest: null.StringFrom("digested-password")}
+	fmt.Printf("before user = %+v\n", user)
+	err = user.Insert(ctx, tx, boil.Infer())
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+	tx.Commit()
+	fmt.Printf("after user = %+v\n", user)
 }
