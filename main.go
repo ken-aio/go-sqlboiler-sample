@@ -9,6 +9,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/volatiletech/sqlboiler/queries/qm"
 
 	"github.com/ken-aio/go-sqlboiler-sample/app/db"
 )
@@ -18,7 +19,8 @@ func main() {
 	//insert()
 	//update()
 	//delete()
-	insertTx()
+	//insertTx()
+	selectSample()
 }
 
 func initDB() {
@@ -70,4 +72,39 @@ func insertTx() {
 	}
 	tx.Commit()
 	fmt.Printf("after user = %+v\n", user)
+}
+
+func selectSample() {
+	//users := db.Users().AllGP(context.Background())
+	//fmt.Printf("users = %+v\n", users)
+
+	//user := db.Users().OneGP(context.Background())
+	//fmt.Printf("user = %+v\n", user)
+
+	//users := db.Users(qm.InnerJoin("group_members on group_members.user_id = users.id")).AllGP(context.Background())
+	//fmt.Printf("users = %+v\n", users)
+
+	//type userMember struct {
+	//	db.User        `boil:",bind"`
+	//	db.GroupMember `boil:",bind"`
+	//}
+	//var mem userMember
+	//db.Users(qm.Select("users.*, group_members.*"), qm.InnerJoin("group_members on group_members.user_id = users.id")).BindG(context.Background(), &mem)
+	//fmt.Printf("mem = %+v\n", mem)
+
+	//user := db.Users(qm.Load("GroupMembers.Group")).OneGP(context.Background())
+	//fmt.Printf("user = %+v\n", user)
+	//fmt.Printf("user.R.GroupMembers = %+v\n", user.R.GroupMembers)
+	//for _, mem := range user.R.GroupMembers {
+	//	fmt.Printf("mem = %+v\n", mem)
+	//	fmt.Printf("mem.R.Group = %+v\n", mem.R.Group)
+	//}
+
+	user := db.Users(qm.Load("GroupMembers", qm.Where("group_members.role = ?", "dummy")), qm.Load("GroupMembers.Group")).OneGP(context.Background())
+	fmt.Printf("user = %+v\n", user)
+	fmt.Printf("user.R.GroupMembers = %+v\n", user.R.GroupMembers)
+	for _, mem := range user.R.GroupMembers {
+		fmt.Printf("mem = %+v\n", mem)
+		fmt.Printf("mem.R.Group = %+v\n", mem.R.Group)
+	}
 }
